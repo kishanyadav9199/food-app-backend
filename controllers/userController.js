@@ -1,7 +1,6 @@
 import userModel from "../models/userModel.js";
 import jwt from "jsonwebtoken"
-import bcrypt from "bcrypt"
-import validator from "validator"
+import bcrypt from "bcryptjs";import validator from "validator"
 
 // login user
 
@@ -48,7 +47,7 @@ const registerUser = async(req,res)=>{
             return res.json({success:false,msg:"Password must be atleast 8 characters"})
         }
         // hashing user password
-        const salt = await bcrypt.genSalt(10)
+        const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password,salt)
         // creating new user
         const newUser = new userModel({
