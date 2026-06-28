@@ -5,30 +5,36 @@ import userModel from "../models/userModel.js";
 
 export const createOrder = async (req, res) => {
   try {
-    const { amount } = req.body;
+    console.log("KEY_ID:", process.env.RAZORPAY_KEY_ID);
+    console.log(
+      "KEY_SECRET:",
+      process.env.RAZORPAY_KEY_SECRET ? "Loaded" : "Missing",
+    );
+    console.log("Amount:", req.body.amount);
 
     const options = {
-      amount: amount * 100,
+      amount: req.body.amount * 100,
       currency: "INR",
       receipt: `receipt_${Date.now()}`,
     };
 
     const order = await razorpay.orders.create(options);
 
+    console.log(order);
+
     res.json({
       success: true,
       order,
     });
   } catch (error) {
-    console.log(error);
+    console.log("RAZORPAY ERROR:", error);
 
     res.status(500).json({
       success: false,
-      message: "Order creation failed",
+      message: error.message,
     });
   }
 };
-
 export const verifyPayment = async (req, res) => {
   try {
     const {

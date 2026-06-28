@@ -1,12 +1,16 @@
 import mongoose from "mongoose";
+import dns from "dns";
+
+
+
+dns.setServers([
+  '1.1.1.1',
+  '8.8.8.8'
+])
  export const connectDB= async()=>{
-    await mongoose
-      .connect(
-        "mongodb+srv://wwwkishan763_db_user:6eXEOPTB1IoyVyG5@cluster0.gko8xrp.mongodb.net/DeliveryApp"
-      )
-      .then(() => {
-        console.log("Database connected");
-      });
+    await mongoose.connect(process.env.MONGODB_URI).then(() => {
+      console.log("Database connected");
+    });
 }
 
 

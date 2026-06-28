@@ -1,51 +1,68 @@
 import userModel from "../models/userModel.js"
-const addToCart= async(req,res)=>{
-    try {
-        let userData = await userModel.findById(req.body.userId)
-        let cartData = await userData.cartData;
-        if(!cartData[req.body.itemId])
-            {
-                cartData[req.body.itemId] = 1;
-            }
-            else{
-                cartData[req.body.itemId] = cartData[req.body.itemId] += 1;
-            }
-            await userModel.findOneAndUpdate({_id:req.body.userId},{cartData})
-            res.json({success:true,msg:"Added to cart"})
-    } catch (error) {
-        console.log(error);
-        res.json({success:false,msg:"Something went wrong"})
+const addToCart = async (itemId) => {
+  try {
+    setCartItem((prev) => {
+      const cart = prev || {};
+
+      return {
+        ...cart,
+        [itemId]: (cart[itemId] || 0) + 1,
+      };
+    });
+
+    if (token) {
+      await axios.post(
+        url + "/api/cart/add",
+        { itemId },
+        { headers: { token } },
+      );
     }
-}
+  } catch (error) {
+    console.log(error);
+  }
+};
 
+const removeFromCart = async (req, res) => {
+  try {
+    const userData = await userModel.findById(req.body.userId);
 
-const removeFromCart= async(req,res)=>{
-    try {
-        let userData = await userModel.findById(req.body.userId)
-        let cartData = await userData.cartData;
-        if(cartData[req.body.itemId]>0)
-            {
-                cartData[req.body.itemId] -= 1;
-            }
-           
-            await userModel.findByIdAndUpdate(req.body.userId,{cartData})
-            res.json({success:true,msg:"Removed from cart"})
-    } catch (error) {
-        console.log(error);
-        res.json({success:false,msg:"Something went wrong"})
+    let cartData = userData.cartData || {};
+
+    if (cartData[req.body.itemId] > 0) {
+      cartData[req.body.itemId] -= 1;
     }
-}
 
+    await userModel.findByIdAndUpdate(req.body.userId, { cartData });
 
-const getCart= async(req,res)=>{
-    try {
-        let userData = await userModel.findById(req.body.userId)
-        let cartData = await userData.cartData;
-        res.json({success:true,data:cartData})
-    } catch (error) {
-        console.log(error);
-        res.json({success:false,msg:"Something went wrong"})
-    }
-}
+    res.json({
+      success: true,
+      msg: "Removed from cart",
+    });
+  } catch (error) {
+    console.log(error);
+    res.json({
+      success: false,
+      msg: "Something went wrong",
+    });
+  }
+};
 
+const getCart = async (req, res) => {
+  try {
+    const userData = await userModel.findById(req.body.userId);
+
+    const cartData = userData.cartData || {};
+
+    res.json({
+      success: true,
+      data: cartData,
+    });
+  } catch (error) {
+    console.log(error);
+    res.json({
+      success: false,
+      msg: "Something went wrong",
+    });
+  }
+};
 export {addToCart, removeFromCart, getCart}

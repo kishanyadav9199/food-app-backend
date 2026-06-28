@@ -7,9 +7,12 @@ import userRouter from './routes/userRoutes.js';
 import cartRouter from './routes/cartRoute.js';
 import orderRouter from './routes/orderRoutes.js';
 import paymentRoutes  from './routes/paymentRoutes.js'
+import connectCloudinary from "./config/cloudinary.js";
 
 const app = express();
 const port = process.env.PORT || 4000;
+
+
 
 
 // middleware middle
@@ -17,6 +20,7 @@ app.use(express.json())
 app.use(cors())
 // db connection \
 connectDB();
+connectCloudinary();
 // api endpoint
 app.use("/api/food",foodRouter)
 app.use("/image",express.static("uploads"))
