@@ -34,7 +34,6 @@ app.get('/',(req,res)=>{
 })
 
 
- //mongodb+srv://yadavgdatabase:9771728554@cluster0.sqemgi4.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
 
 
 app.listen(port,()=>{
